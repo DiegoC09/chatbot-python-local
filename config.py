@@ -1,22 +1,26 @@
-# config.py - OPTIMIZADO PARA PRECISIÓN Y BAJO CONSUMO
-
 import os
 
 class Config:
     """Configuración global del proyecto."""
     
-    # Modelo a usar: Qwen 2.5 Coder 1.5B (Especializado en lógica y código)
+    # Modelo: Qwen 2.5 Coder 1.5B (Ideal para tu RAM y programar)
     MODEL_NAME = "Qwen/Qwen2.5-Coder-1.5B-Instruct"
     
     # Configuración de generación 
-    MAX_LENGTH = 700  # Más longitud para explicaciones y bloques de código.
-    TEMPERATURE = 0.6  # Más bajo para rigor y precisión (ideal para mates/código).
-    TOP_P = 0.9  
-    TOP_K = 40  
+    MAX_LENGTH = 700  # Más espacio para explicar código
+    TEMPERATURE = 0.6  # Precisión técnica
+    TOP_P = 0.9
+    TOP_K = 40
+    
+    # Personalidad del Bot
+    SYSTEM_PROMPT = (
+        "Eres un asistente experto en programación, lógica y matemáticas. "
+        "Tu tono es directo, técnico y en español. Si te piden código, coméntalo bien."
+    )
     
     # Sistema
-    DEVICE = "cpu"  # Aseguramos el uso de CPU.
-    MAX_HISTORY = 5
+    DEVICE = "cpu"
+    MAX_HISTORY = 10  # Aumentamos un poco el historial
     
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     MODELS_DIR = os.path.join(BASE_DIR, "models")

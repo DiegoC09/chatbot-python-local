@@ -11,44 +11,41 @@ class AssistBot:
         self.model = ChatModel()
         self.math = MathSolver()
         self.code = CodeHelper()
-        self.history = []
-    
-def _build_prompt(self, user_input):
-    """Construir prompt con contexto."""
-    # Formato especial para TinyLlama
-    context = "<|system|>\nEres un asistente útil que ayuda con preguntas generales, matemáticas y programación.</s>\n"
-    
-    # Agregar historial
-    for role, msg in self.history[-Config.MAX_HISTORY:]:
-        if role == "Usuario":
-            context += f"<|user|>\n{msg}</s>\n"
-        else:
-            context += f"<|assistant|>\n{msg}</s>\n"
-    
-    context += f"<|user|>\n{user_input}</s>\n<|assistant|>\n"
-    return context
+        # Historial inicial con el Prompt de Sistema
+        self.history = [{"role": "system", "content": Config.SYSTEM_PROMPT}]
     
     def chat(self, user_input):
         """Procesar mensaje del usuario."""
-        self.history.append(("Usuario", user_input))
         
+        # 1. Intentar usar herramienta matemática primero
         if self.math.detect_math(user_input):
             response = self.math.solve(user_input)
             if response:
-                self.history.append(("Asistente", response))
+                self.history.append({"role": "user", "content": user_input})
+                self.history.append({"role": "assistant", "content": response})
                 return response
         
-        if self.code.detect_code(user_input):
-            prompt = self.code.get_code_context() + "\n" + self._build_prompt(user_input)
-        else:
-            prompt = self._build_prompt(user_input)
+        # 2. Si no es matemática, preparar el chat normal
+        self.history.append({"role": "user", "content": user_input})
+
+        # Usamos el template oficial de Qwen para formatear el diálogo
+        # Esto convierte la lista de diccionarios en el texto que el modelo entiende
+        prompt = self.model.tokenizer.apply_chat_template(
+            self.history,
+            tokenize=False,
+            add_generation_prompt=True
+        )
         
+        # 3. Generar respuesta
         response = self.model.generate(prompt)
-        response = response.split("Usuario:")[0].strip()
         
-        self.history.append(("Asistente", response))
+        # Limpieza extra: Qwen a veces devuelve todo el texto.
+        # Buscamos solo lo nuevo si es necesario, aunque generate() ya intentó limpiar.
+        # En Qwen Instruct, lo que importa es que el modelo complete después del header de assistant.
+        
+        self.history.append({"role": "assistant", "content": response})
         return response
     
     def reset(self):
-        """Limpiar historial."""
-        self.history = []
+        """Limpiar historial manteniendo la personalidad."""
+        self.history = [{"role": "system", "content": Config.SYSTEM_PROMPT}]
