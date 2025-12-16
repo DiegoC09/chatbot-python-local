@@ -1,18 +1,21 @@
+# config.py - OPTIMIZADO PARA PRECISIÓN Y BAJO CONSUMO
+
 import os
 
 class Config:
     """Configuración global del proyecto."""
     
-    MODEL_NAME = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
+    # Modelo a usar: Qwen 2.5 Coder 1.5B (Especializado en lógica y código)
+    MODEL_NAME = "Qwen/Qwen2.5-Coder-1.5B-Instruct"
     
-    # Configuración de generación (AJUSTADA)
-    MAX_LENGTH = 100  # Acortamos
-    TEMPERATURE = 0.8  # Más creativo
-    TOP_P = 0.92  # Más variado
-    TOP_K = 40  # Menos repetitivo
-    NO_REPEAT_NGRAM_SIZE = 3  # ← NUEVA LÍNEA
+    # Configuración de generación 
+    MAX_LENGTH = 700  # Más longitud para explicaciones y bloques de código.
+    TEMPERATURE = 0.6  # Más bajo para rigor y precisión (ideal para mates/código).
+    TOP_P = 0.9  
+    TOP_K = 40  
     
-    DEVICE = "cpu"
+    # Sistema
+    DEVICE = "cpu"  # Aseguramos el uso de CPU.
     MAX_HISTORY = 5
     
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
