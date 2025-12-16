@@ -1,0 +1,9 @@
+# Archivos y carpetas de modelos gigantes de Hugging Face
+models/
+
+# Archivos de caché de Python
+__pycache__/
+
+# Archivos de la carpeta virtual de Python
+venv/
+.venv/
